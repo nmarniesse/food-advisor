@@ -2,6 +2,7 @@ package menu
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 
@@ -12,7 +13,7 @@ type ChatGPT struct {
 	Token string
 }
 
-func (c *ChatGPT) RunQuery(query *Query) ([]Menu, error) {
+func (c *ChatGPT) RunQuery(query *Query) (*Response, error) {
 	client := openai.NewClient(c.Token)
 
 	message := query.formatToString()
@@ -30,14 +31,17 @@ func (c *ChatGPT) RunQuery(query *Query) ([]Menu, error) {
 			},
 		},
 	)
-
 	if err != nil {
 		fmt.Printf("ChatCompletion error: %v\n", err)
 		return nil, err
 	}
+	response := resp.Choices[0].Message.Content
+	log.Println("ChatGPT response: " + response)
 
-	fmt.Println(resp.Choices[0].Message.Content)
-	res := make([]Menu, 0)
+	var res Response
+	if err := json.Unmarshal([]byte(response), &res); err != nil {
+		return nil, err
+	}
 
-	return res, nil
+	return &res, nil
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,17 +12,31 @@ import (
 )
 
 func getWeekMenu(w http.ResponseWriter, r *http.Request) {
-	food := []string{"jambon", "tomate", "poulet"}
+	food := []string{"jambon", "tomate", "poulet", "pates", "oeufs"}
 	query := &menu.Query{food, 30, true, 3}
 
-	ia := &menu.ChatGPT{os.Getenv("CHATGPT_TOKEN")}
-	_, err := ia.RunQuery(query)
-
-	if err != nil {
-		fmt.Fprintln(w, err)
+	isFake := os.Getenv("FAKE_AI") == "1"
+	var menus *menu.Response
+	var err error
+	if isFake {
+		fake := menu.Fake{}
+		menus, _ = fake.RunQuery(query)
+	} else {
+		ia := &menu.ChatGPT{os.Getenv("CHATGPT_TOKEN")}
+		menus, err = ia.RunQuery(query)
+		if err != nil {
+			log.Panicln(err)
+		}
 	}
 
-	fmt.Fprintln(w, "End")
+	log.Println(menus)
+	response, err := json.Marshal(menus)
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprintln(w, string(response))
 }
 
 func main() {
