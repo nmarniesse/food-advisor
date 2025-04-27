@@ -23,6 +23,7 @@ Ingrédients disponibles dans mon frigo : %s. Tu peux en rajouter si besoin. Ess
 Temps de préparation : Chaque repas doit être prêt en %d minutes maximum.
 Nombre de personnes : %d personnes. Donne moi juste le plat principal.
 %s
+Les recettes doivent être bien notées sur internet. Tu peux utiliser des sites comme Marmiton, Cuisine AZ ou le journal des femmes.
 Recettes et liste de courses : Pour chaque repas, donne-moi la recette et la liste des courses globale pour toute la semaine.
 Je vais interpreter le résultat donc donne moi le resultat en format json comme par exemple:
 {
@@ -32,23 +33,24 @@ Je vais interpreter le résultat donc donne moi le resultat en format json comme
       "recipeName": "Omelette",
       "ingredients": [
       	{"name": "oeufs", "quantity": 3},
-		{"name": "jambon", "quantity": 200}
+        {"name": "jambon", "quantity": 200}
       ],
       "preparation": [
       	"battre les oeufs",
       	"cuire"
-      ]
+      ],
+      "link": "https://www.marmiton.org"
     }
   ],
   "groceryList": [
     {"name": "oeufs", "quantity": 3},
-	{"name": "jambon", "quantity": 200}
+    {"name": "jambon", "quantity": 200}
   ]
 ]
 `
 	var seasonIngredientSentence string
 	if query.UseSeasonIngredient {
-		seasonIngredientSentence = `Produits de saison : Utilise uniquement des produits de saison, car on est au printemps.`
+		seasonIngredientSentence = `Produits de saison : Utilise majoritairement des produits de saison.`
 	} else {
 		seasonIngredientSentence = ""
 	}
