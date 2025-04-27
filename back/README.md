@@ -9,20 +9,8 @@ API to generate menus using ChatGPT
 - Fill the CHATGPT_TOKEN in your .env
 - Run the server and go to http://localhost:8080
 
+## Run API in local
+
 ```bash
 go run .
 ```
-
-## ChatGPT
-
-Check API usage on https://platform.openai.com/usage
-
-## Task list
-
-- API endpoint to get menus and shopping list
-- Authentication
-- Save selected menus
-- Relaunch query with
-- profile where we can define allergy, veggie, ...
-
-

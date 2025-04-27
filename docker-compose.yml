@@ -1,0 +1,20 @@
+services:
+  api:
+    build: back/.
+    ports:
+      - "8080:8080"
+    networks:
+      - app
+
+  front-dev:
+    build: front/.
+    volumes:
+      - ./front:/app
+    ports:
+      - "5173:5173"
+    command: [ "yarn", "run", "dev", "--host"]
+    networks:
+      - app
+
+networks:
+  app:
