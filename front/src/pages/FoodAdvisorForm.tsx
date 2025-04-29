@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { FC, useState } from "react";
 import {
   Box,
   Button,
@@ -12,11 +12,10 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import { DefaultMenuData, MenuData } from "../models/MenuData";
+import { useFoodAdvisorForm } from "../hooks/useFoodAdvisorForm";
 
-const defaultMaxPreparationTimeInMin = 45;
-const defaultPersons = 4;
-
-const Section = ({ children }) => {
+const Section: FC<{ children: ReactDOM }> = ({ children }) => {
   return (
     <Box component="section" sx={{ margin: "15px" }}>
       {children}
@@ -25,29 +24,32 @@ const Section = ({ children }) => {
 };
 
 const FoodAdvisorForm = () => {
-  const [foodInFridgeList, setFoodInFridgeList] = useState<string[]>([""]);
-  const [maxPreparationTimeInMin, setMaxPreparationTimeInMin] =
-    useState<number>(defaultMaxPreparationTimeInMin);
-  const [useSeasonIngredients, setUseSeasonIngredients] =
-    useState<boolean>(true);
-  const [persons, setPersons] = useState<number>(defaultPersons);
+  const [data, setData] = useState<MenuData>(DefaultMenuData);
+  const { submit } = useFoodAdvisorForm();
 
   const updateFoodInFridge = (index: number, value: string) => {
-    setFoodInFridgeList([
-      ...foodInFridgeList.slice(0, index),
-      value,
-      ...foodInFridgeList.slice(index + 1),
-    ]);
+    setData({
+      ...data,
+      foodInFridgeList: [
+        ...data.foodInFridgeList.slice(0, index),
+        value,
+        ...data.foodInFridgeList.slice(index + 1),
+      ],
+    });
   };
   const removeFoodInFridge = (index: number) => {
     console.log("index", index);
 
-    setFoodInFridgeList([
-      ...foodInFridgeList.slice(0, index),
-      ...foodInFridgeList.slice(index + 1),
-    ]);
+    setData({
+      ...data,
+      foodInFridgeList: [
+        ...data.foodInFridgeList.slice(0, index),
+        ...data.foodInFridgeList.slice(index + 1),
+      ],
+    });
   };
-  const addFoodInFridge = () => setFoodInFridgeList([...foodInFridgeList, ""]);
+  const addFoodInFridge = () =>
+    setData({ ...data, foodInFridgeList: [...data.foodInFridgeList, ""] });
 
   return (
     <Container maxWidth="md">
@@ -56,7 +58,7 @@ const FoodAdvisorForm = () => {
       </Typography>
       <Section>
         <Typography component="div">Aliments dans le frigo</Typography>
-        {foodInFridgeList.map((foodInFridge, index) => (
+        {data.foodInFridgeList.map((foodInFridge, index) => (
           <div key={index}>
             <Stack
               spacing={2}
@@ -80,7 +82,7 @@ const FoodAdvisorForm = () => {
                   <RemoveIcon />
                 </Button>
               )}
-              {index === foodInFridgeList.length - 1 && (
+              {index === data.foodInFridgeList.length - 1 && (
                 <Button variant="text" onClick={addFoodInFridge}>
                   <AddIcon />
                 </Button>
@@ -95,16 +97,36 @@ const FoodAdvisorForm = () => {
         <Stack spacing={4} direction="row" sx={{ alignItems: "center", mb: 1 }}>
           <Slider
             size="medium"
-            defaultValue={defaultMaxPreparationTimeInMin}
+            value={data.maxPreparationTimeInMin}
             aria-label="Max preparation time in minutes"
             valueLabelDisplay="auto"
             step={15}
             min={15}
             max={90}
-            onChange={(_, newValue) => setMaxPreparationTimeInMin(newValue)}
+            onChange={(_, newValue) =>
+              setData({ ...data, maxPreparationTimeInMin: newValue })
+            }
             sx={{ width: "250px" }}
           />
-          <div>{maxPreparationTimeInMin} minutes</div>
+          <div>{data.maxPreparationTimeInMin} minutes</div>
+        </Stack>
+      </Section>
+      <Divider />
+      <Section>
+        <Typography component="div">Personnes</Typography>
+        <Stack spacing={4} direction="row" sx={{ alignItems: "center", mb: 1 }}>
+          <Slider
+            size="medium"
+            value={data.persons}
+            aria-label="Persons"
+            valueLabelDisplay="auto"
+            step={1}
+            min={1}
+            max={10}
+            onChange={(_, newValue) => setData({ ...data, persons: newValue })}
+            sx={{ width: "250px" }}
+          />
+          <div>{data.persons}</div>
         </Stack>
       </Section>
       <Divider />
@@ -113,31 +135,15 @@ const FoodAdvisorForm = () => {
           Utiliser des ingrédients de saison?
         </Typography>
         <Switch
-          checked={useSeasonIngredients}
-          onClick={() => setUseSeasonIngredients(!useSeasonIngredients)}
+          checked={data.useSeasonIngredient}
+          onClick={() =>
+            setData({ ...data, useSeasonIngredient: !data.useSeasonIngredient })
+          }
         />
       </Section>
       <Divider />
       <Section>
-        <Typography component="div">Personnes</Typography>
-        <Stack spacing={4} direction="row" sx={{ alignItems: "center", mb: 1 }}>
-          <Slider
-            size="medium"
-            defaultValue={defaultPersons}
-            aria-label="Persons"
-            valueLabelDisplay="auto"
-            step={1}
-            min={1}
-            max={10}
-            onChange={(_, newValue) => setPersons(newValue)}
-            sx={{ width: "250px" }}
-          />
-          <div>{persons}</div>
-        </Stack>
-      </Section>
-      <Divider />
-      <Section>
-        <Button variant="contained" onClick={() => alert("todo")}>
+        <Button variant="contained" onClick={() => submit(data)}>
           Valider
         </Button>
       </Section>
