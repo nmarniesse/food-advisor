@@ -9,6 +9,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/nmarniesse/food-advisor/menu"
+	"github.com/rs/cors"
 )
 
 func getWeekMenu(w http.ResponseWriter, r *http.Request) {
@@ -49,6 +50,9 @@ func main() {
 		log.Println("Listening on http://localhost:8080")
 	}
 
-	http.HandleFunc("/week-menu", getWeekMenu)
-	http.ListenAndServe(":8080", nil)
+	mux := http.NewServeMux()
+	mux.HandleFunc("/week-menu", getWeekMenu)
+
+	handler := cors.Default().Handler(mux)
+    http.ListenAndServe(":8080", handler)
 }
