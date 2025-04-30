@@ -1,6 +1,5 @@
-import { FC, useState } from "react";
+import { useState } from "react";
 import {
-  Box,
   Button,
   Container,
   Divider,
@@ -14,42 +13,39 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { DefaultMenuData, MenuData } from "../models/MenuData";
 import { useFoodAdvisorForm } from "../hooks/useFoodAdvisorForm";
-
-const Section: FC<{ children: ReactDOM }> = ({ children }) => {
-  return (
-    <Box component="section" sx={{ margin: "15px" }}>
-      {children}
-    </Box>
-  );
-};
+import { Section } from "../components/common/Section";
+import { FoodAdvisorMenus } from "../components/FoodAdvisorMenus";
 
 const FoodAdvisorForm = () => {
-  const [data, setData] = useState<MenuData>(DefaultMenuData);
-  const { submit } = useFoodAdvisorForm();
+  const [formData, setFormData] = useState<MenuData>(DefaultMenuData);
+  const { submit, data: responseData, isLoading } = useFoodAdvisorForm();
 
   const updateFoodInFridge = (index: number, value: string) => {
-    setData({
-      ...data,
+    setFormData({
+      ...formData,
       foodInFridgeList: [
-        ...data.foodInFridgeList.slice(0, index),
+        ...formData.foodInFridgeList.slice(0, index),
         value,
-        ...data.foodInFridgeList.slice(index + 1),
+        ...formData.foodInFridgeList.slice(index + 1),
       ],
     });
   };
   const removeFoodInFridge = (index: number) => {
     console.log("index", index);
 
-    setData({
-      ...data,
+    setFormData({
+      ...formData,
       foodInFridgeList: [
-        ...data.foodInFridgeList.slice(0, index),
-        ...data.foodInFridgeList.slice(index + 1),
+        ...formData.foodInFridgeList.slice(0, index),
+        ...formData.foodInFridgeList.slice(index + 1),
       ],
     });
   };
   const addFoodInFridge = () =>
-    setData({ ...data, foodInFridgeList: [...data.foodInFridgeList, ""] });
+    setFormData({
+      ...formData,
+      foodInFridgeList: [...formData.foodInFridgeList, ""],
+    });
 
   return (
     <Container maxWidth="md">
@@ -58,7 +54,7 @@ const FoodAdvisorForm = () => {
       </Typography>
       <Section>
         <Typography component="div">Aliments dans le frigo</Typography>
-        {data.foodInFridgeList.map((foodInFridge, index) => (
+        {formData.foodInFridgeList.map((foodInFridge, index) => (
           <div key={index}>
             <Stack
               spacing={2}
@@ -82,7 +78,7 @@ const FoodAdvisorForm = () => {
                   <RemoveIcon />
                 </Button>
               )}
-              {index === data.foodInFridgeList.length - 1 && (
+              {index === formData.foodInFridgeList.length - 1 && (
                 <Button variant="text" onClick={addFoodInFridge}>
                   <AddIcon />
                 </Button>
@@ -93,22 +89,22 @@ const FoodAdvisorForm = () => {
       </Section>
       <Divider />
       <Section>
-        <Typography component="div">temps de préparation maximum</Typography>
+        <Typography component="div">Temps de préparation maximum</Typography>
         <Stack spacing={4} direction="row" sx={{ alignItems: "center", mb: 1 }}>
           <Slider
             size="medium"
-            value={data.maxPreparationTimeInMin}
+            value={formData.maxPreparationTimeInMin}
             aria-label="Max preparation time in minutes"
             valueLabelDisplay="auto"
             step={15}
             min={15}
             max={90}
             onChange={(_, newValue) =>
-              setData({ ...data, maxPreparationTimeInMin: newValue })
+              setFormData({ ...formData, maxPreparationTimeInMin: newValue })
             }
             sx={{ width: "250px" }}
           />
-          <div>{data.maxPreparationTimeInMin} minutes</div>
+          <div>{formData.maxPreparationTimeInMin} minutes</div>
         </Stack>
       </Section>
       <Divider />
@@ -117,16 +113,18 @@ const FoodAdvisorForm = () => {
         <Stack spacing={4} direction="row" sx={{ alignItems: "center", mb: 1 }}>
           <Slider
             size="medium"
-            value={data.persons}
+            value={formData.persons}
             aria-label="Persons"
             valueLabelDisplay="auto"
             step={1}
             min={1}
             max={10}
-            onChange={(_, newValue) => setData({ ...data, persons: newValue })}
+            onChange={(_, newValue) =>
+              setFormData({ ...formData, persons: newValue })
+            }
             sx={{ width: "250px" }}
           />
-          <div>{data.persons}</div>
+          <div>{formData.persons}</div>
         </Stack>
       </Section>
       <Divider />
@@ -135,18 +133,36 @@ const FoodAdvisorForm = () => {
           Utiliser des ingrédients de saison?
         </Typography>
         <Switch
-          checked={data.useSeasonIngredient}
+          checked={formData.useSeasonIngredient}
           onClick={() =>
-            setData({ ...data, useSeasonIngredient: !data.useSeasonIngredient })
+            setFormData({
+              ...formData,
+              useSeasonIngredient: !formData.useSeasonIngredient,
+            })
           }
         />
       </Section>
       <Divider />
       <Section>
-        <Button variant="contained" onClick={() => submit(data)}>
+        <Button
+          variant="contained"
+          onClick={() => submit(formData)}
+          disabled={isLoading}
+        >
           Valider
         </Button>
       </Section>
+      {isLoading && (
+        <Section>
+          <Typography component="div">Chargement...</Typography>
+        </Section>
+      )}
+      {!isLoading && responseData && (
+        <FoodAdvisorMenus
+          recipes={responseData.recipes}
+          groceryList={responseData.groceryList}
+        />
+      )}
     </Container>
   );
 };

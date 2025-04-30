@@ -11,3 +11,15 @@ export const DefaultMenuData: MenuData = {
   useSeasonIngredient: true,
   persons: 4,
 };
+
+export type Recipe = {
+  day: string;
+  recipeName: string;
+  ingredients: Ingredient[];
+  preparation: string[];
+};
+
+export type Ingredient = {
+  name: string;
+  quantity: number;
+};
