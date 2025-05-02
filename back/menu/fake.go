@@ -36,7 +36,8 @@ var fakeData = []byte(`{
 		"Faire griller le poulet",
 		"Couper la salade, les tomates et le poulet",
 		"Ajouter la vinaigrette"
-	  ]
+	  ],
+	  "recipeLink": "https://www.cuisineaz.com/recettes/salade-de-poulet-grille-67481.aspx"
 	},
 	{
 	  "day": "Mardi",
@@ -52,7 +53,8 @@ var fakeData = []byte(`{
 		"Faire revenir le jambon et les tomates cerises dans une poêle",
 		"Mélanger les pâtes cuites avec le jambon et les tomates",
 		"Saupoudrer de fromage râpé"
-	  ]
+	  ],
+	  "recipeLink": "https://www.cuisineaz.com/recettes/salade-de-poulet-grille-67481.aspx"
 	},
 	{
 	  "day": "Mercredi",
@@ -68,7 +70,8 @@ var fakeData = []byte(`{
 		"Déposer le saumon et les poireaux sur une feuille de papier sulfurisé",
 		"Arroser de jus de citron",
 		"Fermer la papillote et enfourner"
-	  ]
+	  ],
+	  "recipeLink": "https://www.cuisineaz.com/recettes/salade-de-poulet-grille-67481.aspx"
 	},
 	{
 	  "day": "Jeudi",
@@ -83,7 +86,8 @@ var fakeData = []byte(`{
 		"Cuire le riz",
 		"Faire revenir le poulet, les poivrons et l'oignon dans une poêle",
 		"Ajouter le riz cuit et mélanger"
-	  ]
+	  ],
+	  "recipeLink": "https://www.cuisineaz.com/recettes/salade-de-poulet-grille-67481.aspx"
 	},
 	{
 	  "day": "Vendredi",
@@ -98,7 +102,8 @@ var fakeData = []byte(`{
 		"Étaler la pâte à pizza",
 		"Garnir de jambon, tomates et fromage",
 		"Enfourner jusqu'à ce que le fromage soit fondu et la pâte dorée"
-	  ]
+	  ],
+	  "recipeLink": "https://www.cuisineaz.com/recettes/salade-de-poulet-grille-67481.aspx"
 	}
   ],
   "groceryList": [

@@ -2,12 +2,17 @@ import {
   Box,
   Button,
   Card,
+  CardActionArea,
+  CardActions,
   CardContent,
+  Checkbox,
   Collapse,
   Grid,
+  Link,
   List,
   ListItem,
   ListItemText,
+  Stack,
   Tab,
   Tabs,
   Typography,
@@ -48,9 +53,21 @@ const FoodAdvisorMenus: FC<Props> = ({ recipes, groceryList }) => {
   const [openPreparations, setOpenPreparations] = useState<boolean[]>(
     recipes.map(() => false),
   );
+  const [menuSelected, setMenuSelectedsetOpenPreparations] = useState<
+    boolean[]
+  >(recipes.map(() => false));
 
-  const openPreparation = (index: number) => {
+  const togglePreparationView = (index: number) => {
     setOpenPreparations((prev) => {
+      const newOpenPreparations = [...prev];
+      newOpenPreparations[index] = !newOpenPreparations[index];
+
+      return newOpenPreparations;
+    });
+  };
+
+  const toggleSelection = (index: number) => {
+    setMenuSelectedsetOpenPreparations((prev) => {
       const newOpenPreparations = [...prev];
       newOpenPreparations[index] = !newOpenPreparations[index];
 
@@ -72,42 +89,58 @@ const FoodAdvisorMenus: FC<Props> = ({ recipes, groceryList }) => {
             {recipes.map((recipe: Recipe, index: number) => (
               <Grid size={6} key={index}>
                 <Card variant="outlined">
-                  <CardContent>
-                    <Typography
-                      gutterBottom
-                      sx={{ color: "text.secondary", fontSize: 14 }}
-                    >
-                      {recipe.day}
-                    </Typography>
-                    <Typography variant="h5">{recipe.recipeName}</Typography>
-                    <Box sx={{ marginTop: "10px" }}>Ingrédients</Box>
-                    <List dense={true}>
-                      {recipe.ingredients.map((ingredient, index) => (
-                        <ListItem key={index}>
-                          <ListItemText
-                            primary={`${ingredient.name} - ${ingredient.quantity}`}
-                          />
-                          {/* {ingredient.name} : {ingredient.quantity} */}
-                        </ListItem>
-                      ))}
-                    </List>
-                    <Button onClick={() => openPreparation(index)}>
+                  <CardActionArea onClick={() => toggleSelection(index)}>
+                    <CardContent>
+                      <Stack
+                        direction={"row"}
+                        spacing={2}
+                        sx={{ mb: 2, alignItems: "center" }}
+                      >
+                        <Typography
+                          gutterBottom
+                          sx={{ color: "text.secondary", fontSize: 14 }}
+                        >
+                          {recipe.day}
+                        </Typography>
+                        <Checkbox checked={menuSelected[index] ?? false} />
+                      </Stack>
+                      <Typography variant="h5">{recipe.recipeName}</Typography>
+                      <Box sx={{ marginTop: "10px" }}>Ingrédients</Box>
+                      <List dense={true}>
+                        {recipe.ingredients.map((ingredient, index) => (
+                          <ListItem key={index}>
+                            <ListItemText
+                              primary={`${ingredient.name} - ${ingredient.quantity}`}
+                            />
+                            {/* {ingredient.name} : {ingredient.quantity} */}
+                          </ListItem>
+                        ))}
+                      </List>
+                      <Link href={recipe.recipeLink} target="_blank">
+                        Voir la rectte complète
+                      </Link>
+                    </CardContent>
+                  </CardActionArea>
+                  <CardActions>
+                    <Button onClick={() => togglePreparationView(index)}>
                       {openPreparations[index]
                         ? "Cacher Préparation"
                         : "Voir Préparation"}
                     </Button>
-                    <Collapse
-                      in={openPreparations[index] ?? false}
-                      timeout="auto"
-                      unmountOnExit
-                    >
+                  </CardActions>
+                  <Collapse
+                    in={openPreparations[index] ?? false}
+                    timeout="auto"
+                    unmountOnExit
+                  >
+                    <CardContent>
                       <ol>
                         {recipe.preparation.map((step, index) => (
                           <li key={index}>{step}</li>
                         ))}
                       </ol>
-                    </Collapse>
-                  </CardContent>
+                    </CardContent>
+                  </Collapse>
                 </Card>
               </Grid>
             ))}

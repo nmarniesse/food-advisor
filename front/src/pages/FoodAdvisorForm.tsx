@@ -154,13 +154,38 @@ const FoodAdvisorForm = () => {
       </Section>
       <Divider />
       <Section>
-        <Button
-          variant="contained"
-          onClick={() => submit(formData)}
-          disabled={isLoading}
-        >
-          Valider
-        </Button>
+        {!responseData && (
+          <Button
+            variant="contained"
+            onClick={() => submit(formData)}
+            disabled={isLoading}
+          >
+            Valider
+          </Button>
+        )}
+        {responseData && (
+          <Stack
+            spacing={2}
+            direction="row"
+            sx={{ alignItems: "center", mb: 1 }}
+          >
+            <Button
+              variant="contained"
+              onClick={() => submit(formData)}
+              disabled={isLoading}
+            >
+              Relancer
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => alert("TODO")}
+              disabled={isLoading}
+            >
+              Relancer en gardant la sélection
+            </Button>
+          </Stack>
+        )}
       </Section>
       {!isLoading && responseData && (
         <FoodAdvisorMenus

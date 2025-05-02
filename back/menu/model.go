@@ -39,7 +39,7 @@ Je vais interpreter le résultat donc donne moi le resultat en format json comme
       	"battre les oeufs",
       	"cuire"
       ],
-      "link": "https://www.marmiton.org"
+      "recipeLink": "https://www.marmiton.org/recettes/recette_omelette-jambon-fromage_68824.aspx"
     }
   ],
   "groceryList": [
@@ -80,6 +80,7 @@ type Menu struct {
 	RecipeName  string       `json:"recipeName"`
 	Ingredients []Ingredient `json:"ingredients"`
 	Preparation []string     `json:"preparation"`
+	RecipeLink  string       `json:"recipeLink"`
 }
 
 type Response struct {

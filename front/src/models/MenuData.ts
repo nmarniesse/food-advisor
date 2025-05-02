@@ -17,6 +17,7 @@ export type Recipe = {
   recipeName: string;
   ingredients: Ingredient[];
   preparation: string[];
+  recipeLink: string;
 };
 
 export type Ingredient = {
