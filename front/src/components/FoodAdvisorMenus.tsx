@@ -1,8 +1,13 @@
 import {
   Box,
+  Button,
+  Card,
+  CardContent,
   Collapse,
   Grid,
-  Paper,
+  List,
+  ListItem,
+  ListItemText,
   Tab,
   Tabs,
   Typography,
@@ -10,7 +15,6 @@ import {
 import { Ingredient, Recipe } from "../models/MenuData";
 import { Section } from "./common/Section";
 import { useState } from "react";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -67,33 +71,44 @@ const FoodAdvisorMenus: FC<Props> = ({ recipes, groceryList }) => {
           <Grid container spacing={2}>
             {recipes.map((recipe: Recipe, index: number) => (
               <Grid size={6} key={index}>
-                <Paper>
-                  <Typography variant="h3">{recipe.day}</Typography>
-                  <Typography variant="h4">{recipe.recipeName}</Typography>
-                  <p>Ingrédients :</p>
-                  <ul>
-                    {recipe.ingredients.map((ingredient, index) => (
-                      <li key={index}>
-                        {ingredient.name} : {ingredient.quantity}
-                      </li>
-                    ))}
-                  </ul>
-                  <p onClick={() => openPreparation(index)}>
-                    Préparation
-                    {openPreparations[index] ? <ExpandLess /> : <ExpandMore />}
-                  </p>
-                  <Collapse
-                    in={openPreparations[index] ?? false}
-                    timeout="auto"
-                    unmountOnExit
-                  >
-                    <ol>
-                      {recipe.preparation.map((step, index) => (
-                        <li key={index}>{step}</li>
+                <Card variant="outlined">
+                  <CardContent>
+                    <Typography
+                      gutterBottom
+                      sx={{ color: "text.secondary", fontSize: 14 }}
+                    >
+                      {recipe.day}
+                    </Typography>
+                    <Typography variant="h5">{recipe.recipeName}</Typography>
+                    <Box sx={{ marginTop: "10px" }}>Ingrédients</Box>
+                    <List dense={true}>
+                      {recipe.ingredients.map((ingredient, index) => (
+                        <ListItem key={index}>
+                          <ListItemText
+                            primary={`${ingredient.name} - ${ingredient.quantity}`}
+                          />
+                          {/* {ingredient.name} : {ingredient.quantity} */}
+                        </ListItem>
                       ))}
-                    </ol>
-                  </Collapse>
-                </Paper>
+                    </List>
+                    <Button onClick={() => openPreparation(index)}>
+                      {openPreparations[index]
+                        ? "Cacher Préparation"
+                        : "Voir Préparation"}
+                    </Button>
+                    <Collapse
+                      in={openPreparations[index] ?? false}
+                      timeout="auto"
+                      unmountOnExit
+                    >
+                      <ol>
+                        {recipe.preparation.map((step, index) => (
+                          <li key={index}>{step}</li>
+                        ))}
+                      </ol>
+                    </Collapse>
+                  </CardContent>
+                </Card>
               </Grid>
             ))}
           </Grid>
