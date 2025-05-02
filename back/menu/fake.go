@@ -2,11 +2,17 @@ package menu
 
 import (
 	"encoding/json"
+	"log"
+	"time"
 )
 
 type Fake struct{}
 
 func (fake *Fake) RunQuery(query *Query) (*Response, error) {
+	message := query.formatToString()
+	log.Println("Query is about to start with message:\n" + message)
+
+	time.Sleep(1 * time.Second)
 	var res Response
 	if err := json.Unmarshal(fakeData, &res); err != nil {
 		return nil, err

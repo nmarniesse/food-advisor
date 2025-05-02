@@ -22,10 +22,17 @@ const useFoodAdvisorForm = (): Return => {
     console.log(menuData);
     console.log("VITE_BACKEND_URL", import.meta.env.VITE_BACKEND_URL);
 
+    const params = new URLSearchParams({
+      food_in_fridge: menuData.foodInFridgeList.join(","),
+      max_preparation_time: menuData.maxPreparationTimeInMin.toString(),
+      persons: menuData.persons.toString(),
+      use_season_ingredients: menuData.useSeasonIngredient ? "1" : "0",
+    });
+
     setIsLoading(true);
     setError(null);
     setData(null);
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/week-menu`, {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/week-menu?` + params, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

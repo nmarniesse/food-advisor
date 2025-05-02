@@ -17,9 +17,9 @@ type IAProvider interface {
 }
 
 func (query *Query) formatToString() string {
-	template := `
-Je souhaite que tu me fasses un menu pour la semaine avec les conditions suivantes :
-Ingrédients disponibles dans mon frigo : %s. Tu peux en rajouter si besoin. Essaie de ne pas utiliser le même ingrédient plus de 1 repas.
+	template := `Je souhaite que tu me fasses un menu pour la semaine avec les conditions suivantes :
+%s
+Essaie de ne pas utiliser le même ingrédient plus de 1 repas.
 Temps de préparation : Chaque repas doit être prêt en %d minutes maximum.
 Nombre de personnes : %d personnes. Donne moi juste le plat principal.
 %s
@@ -48,6 +48,13 @@ Je vais interpreter le résultat donc donne moi le resultat en format json comme
   ]
 ]
 `
+	var foodInFridgeSentence string
+	if len(query.FoodInFridge) > 0 {
+		foodInFridgeSentence = fmt.Sprintf("Ingrédients disponibles dans mon frigo : %s. Tu peux en rajouter si besoin. ", strings.Join(query.FoodInFridge, ", "))
+	} else {
+		foodInFridgeSentence = ""
+	}
+
 	var seasonIngredientSentence string
 	if query.UseSeasonIngredient {
 		seasonIngredientSentence = `Produits de saison : Utilise majoritairement des produits de saison.`
@@ -57,7 +64,7 @@ Je vais interpreter le résultat donc donne moi le resultat en format json comme
 
 	return fmt.Sprintf(
 		template,
-		strings.Join(query.FoodInFridge, ", "),
+		foodInFridgeSentence,
 		query.MaxPreparationTimeInMin, query.Persons,
 		seasonIngredientSentence,
 	)

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import {
+  Backdrop,
   Button,
+  CircularProgress,
   Container,
   Divider,
   Slider,
@@ -49,6 +51,14 @@ const FoodAdvisorForm = () => {
 
   return (
     <Container maxWidth="md">
+      {isLoading && (
+        <Backdrop
+          sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+          open={true}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      )}
       <Typography variant="h2" gutterBottom>
         Générateur de menus
       </Typography>
@@ -152,11 +162,6 @@ const FoodAdvisorForm = () => {
           Valider
         </Button>
       </Section>
-      {isLoading && (
-        <Section>
-          <Typography component="div">Chargement...</Typography>
-        </Section>
-      )}
       {!isLoading && responseData && (
         <FoodAdvisorMenus
           recipes={responseData.recipes}

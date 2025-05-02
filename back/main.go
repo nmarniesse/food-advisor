@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/joho/godotenv"
 	"github.com/nmarniesse/food-advisor/menu"
@@ -13,17 +15,55 @@ import (
 )
 
 func getWeekMenu(w http.ResponseWriter, r *http.Request) {
-	food := []string{"jambon", "tomate", "poulet", "pates", "oeufs"}
-	query := &menu.Query{food, 30, true, 3}
+	var err error
+	foodInFridgeParam := r.FormValue("food_in_fridge")
+	var foodInFridge []string
+	if foodInFridgeParam == "" {
+		foodInFridge = []string{}
+	} else {
+		foodInFridge = strings.Split(foodInFridgeParam, ",")
+	}
+
+	maxPreparationTime, err := strconv.Atoi(r.FormValue("max_preparation_time"))
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintln(w, "max_preparation_time must be an integer")
+		return
+	}
+
+	persons, err := strconv.Atoi(r.FormValue("persons"))
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintln(w, "persons must be an integer")
+		return
+	}
+
+	useSasonIngredients, err := strconv.ParseBool(r.FormValue("use_season_ingredients"))
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintln(w, "use_season_ingredients must be a boolean")
+		return
+	}
+
+	log.Println("foodInFridge:", foodInFridge)
+	log.Println("maxPreparationTime:", maxPreparationTime)
+	log.Println("persons:", persons)
+	log.Println("useSasonIngredients:", useSasonIngredients)
+
+	query := &menu.Query{
+		FoodInFridge:            foodInFridge,
+		MaxPreparationTimeInMin: maxPreparationTime,
+		UseSeasonIngredient:     useSasonIngredients,
+		Persons:                 persons,
+	}
 
 	isFake := os.Getenv("FAKE_AI") == "1"
 	var menus *menu.Response
-	var err error
 	if isFake {
 		fake := menu.Fake{}
 		menus, _ = fake.RunQuery(query)
 	} else {
-		ia := &menu.ChatGPT{os.Getenv("CHATGPT_TOKEN")}
+		ia := &menu.ChatGPT{Token: os.Getenv("CHATGPT_TOKEN")}
 		menus, err = ia.RunQuery(query)
 		if err != nil {
 			log.Panicln(err)
@@ -54,5 +94,5 @@ func main() {
 	mux.HandleFunc("/week-menu", getWeekMenu)
 
 	handler := cors.Default().Handler(mux)
-    http.ListenAndServe(":8080", handler)
+	http.ListenAndServe(":8080", handler)
 }
