@@ -9,18 +9,24 @@ import {
   Typography,
 } from "@mui/material";
 import { DefaultMenuData, MenuData } from "../models/MenuData";
-import { useFoodAdvisorForm } from "../hooks/useFoodAdvisorForm";
+import { useGetWeekMenus } from "../hooks/useGetWeekMenus";
 import { FoodAdvisorResult } from "../components/FoodAdvisorResult";
 import { FoodAdvisorForm } from "../components/FoodAdvisorForm";
 import { Section } from "../components/common/Section";
+import { useRefineWeekMenus } from "../hooks/useRefineWeekMenus";
 
 const FoodAdvisorPage = () => {
   const [formData, setFormData] = useState<MenuData>(DefaultMenuData);
-  const { submit, data: responseData, isLoading } = useFoodAdvisorForm();
+  const { submit, data: responseData, isLoading } = useGetWeekMenus();
+  const {
+    submit: submitRefine,
+    data: responseDataRefine,
+    isLoading: isLoadingRefine,
+  } = useRefineWeekMenus();
 
   return (
     <Container maxWidth="md">
-      {isLoading && (
+      {(isLoading || isLoadingRefine) && (
         <Backdrop
           sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
           open={true}
@@ -44,7 +50,7 @@ const FoodAdvisorPage = () => {
             Valider
           </Button>
         )}
-        {responseData && (
+        {(responseData || responseDataRefine) && (
           <Stack
             spacing={2}
             direction="row"
@@ -60,8 +66,8 @@ const FoodAdvisorPage = () => {
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => alert("TODO")}
-              disabled={isLoading}
+              onClick={() => submitRefine(["lundi", "mardi"])}
+              disabled={isLoadingRefine}
             >
               Relancer en gardant la sélection
             </Button>
@@ -69,10 +75,16 @@ const FoodAdvisorPage = () => {
         )}
       </Section>
 
-      {!isLoading && responseData && (
+      {!isLoading && responseData && !responseDataRefine && (
         <FoodAdvisorResult
           recipes={responseData.recipes}
           groceryList={responseData.groceryList}
+        />
+      )}
+      {!isLoadingRefine && responseDataRefine && (
+        <FoodAdvisorResult
+          recipes={responseDataRefine.recipes}
+          groceryList={responseDataRefine.groceryList}
         />
       )}
     </Container>

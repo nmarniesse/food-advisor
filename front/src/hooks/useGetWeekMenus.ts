@@ -13,15 +13,12 @@ export type MenuResponse = {
   groceryList: Ingredient[];
 };
 
-const useFoodAdvisorForm = (): Return => {
+const useGetWeekMenus = (): Return => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<MenuResponse | null>(null);
 
   const submit = (menuData: MenuData) => {
-    console.log(menuData);
-    console.log("VITE_BACKEND_URL", import.meta.env.VITE_BACKEND_URL);
-
     const params = new URLSearchParams({
       food_in_fridge: menuData.foodInFridgeList.join(","),
       max_preparation_time: menuData.maxPreparationTimeInMin.toString(),
@@ -59,4 +56,4 @@ const useFoodAdvisorForm = (): Return => {
   return { submit, data, isLoading, error };
 };
 
-export { useFoodAdvisorForm };
+export { useGetWeekMenus };

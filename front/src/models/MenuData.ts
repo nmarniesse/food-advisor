@@ -22,5 +22,5 @@ export type Recipe = {
 
 export type Ingredient = {
   name: string;
-  quantity: number;
+  quantity: string;
 };
