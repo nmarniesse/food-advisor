@@ -8,7 +8,7 @@ import (
 func (query *Query) formatToString() string {
 	template := `Je souhaite que tu me fasses un menu pour la semaine avec les conditions suivantes :
 %s
-Essaie de ne pas utiliser le même ingrédient plus de 1 repas.
+Essaie de ne pas utiliser le même ingrédient plus de 2 repas.
 Temps de préparation : Chaque repas doit être prêt en %d minutes maximum.
 Nombre de personnes : %d personnes. Donne moi juste le plat principal.
 %s
@@ -21,8 +21,8 @@ Je vais interpreter le résultat donc donne moi le resultat en format json comme
       "day": "lundi",
       "recipeName": "Omelette",
       "ingredients": [
-      	{"name": "oeufs", "quantity": 3},
-        {"name": "jambon", "quantity": 200}
+      	{"name": "oeufs", "quantity": "3"},
+        {"name": "jambon", "quantity": "200g"}
       ],
       "preparation": [
       	"battre les oeufs",
@@ -32,8 +32,8 @@ Je vais interpreter le résultat donc donne moi le resultat en format json comme
     }
   ],
   "groceryList": [
-    {"name": "oeufs", "quantity": 3},
-    {"name": "jambon", "quantity": 200}
+    {"name": "oeufs", "quantity": "3"},
+    {"name": "jambon", "quantity": "200g"}
   ]
 ]
 `

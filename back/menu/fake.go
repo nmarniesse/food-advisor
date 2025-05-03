@@ -21,16 +21,26 @@ func (fake *Fake) RunQuery(query *Query) (*Response, error) {
 	return &res, nil
 }
 
+func (fake *Fake) RunRefineQuery(query *RefineQuery) (*Response, error) {
+	time.Sleep(1 * time.Second)
+	var res Response
+	if err := json.Unmarshal(fakeData, &res); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
 var fakeData = []byte(`{
   "recipes": [
 	{
 	  "day": "Lundi",
 	  "recipeName": "Salade de poulet grillé",
 	  "ingredients": [
-		{"name": "poulet", "quantity": 500},
-		{"name": "salade verte", "quantity": 1},
-		{"name": "tomate", "quantity": 2},
-		{"name": "vinaigrette", "quantity": 1}
+		{"name": "poulet", "quantity": "500g"},
+		{"name": "salade verte", "quantity": "1"},
+		{"name": "tomate", "quantity": "2"},
+		{"name": "vinaigrette", "quantity": "1"}
 	  ],
 	  "preparation": [
 		"Faire griller le poulet",
@@ -43,10 +53,10 @@ var fakeData = []byte(`{
 	  "day": "Mardi",
 	  "recipeName": "Pâtes au jambon et tomates cerises",
 	  "ingredients": [
-		{"name": "pâtes", "quantity": 300},
-		{"name": "jambon", "quantity": 200},
-		{"name": "tomates cerises", "quantity": 200},
-		{"name": "fromage râpé", "quantity": 100}
+		{"name": "pâtes", "quantity": "300g"},
+		{"name": "jambon", "quantity": "200g"},
+		{"name": "tomates cerises", "quantity": "200g"},
+		{"name": "fromage râpé", "quantity": "100g"}
 	  ],
 	  "preparation": [
 		"Cuire les pâtes",
@@ -60,9 +70,9 @@ var fakeData = []byte(`{
 	  "day": "Mercredi",
 	  "recipeName": "Saumon en papillote",
 	  "ingredients": [
-		{"name": "saumon", "quantity": 500},
-		{"name": "poireaux", "quantity": 3},
-		{"name": "citron", "quantity": 1}
+		{"name": "saumon", "quantity": "500g"},
+		{"name": "poireaux", "quantity": "3"},
+		{"name": "citron", "quantity": "1"}
 	  ],
 	  "preparation": [
 		"Préchauffer le four",
@@ -77,10 +87,10 @@ var fakeData = []byte(`{
 	  "day": "Jeudi",
 	  "recipeName": "Riz sauté au poulet",
 	  "ingredients": [
-		{"name": "riz", "quantity": 300},
-		{"name": "poulet", "quantity": 300},
-		{"name": "poivrons rouges", "quantity": 2},
-		{"name": "oignon", "quantity": 1}
+		{"name": "riz", "quantity": "300g"},
+		{"name": "poulet", "quantity": "300g"},
+		{"name": "poivrons rouges", "quantity": "2"},
+		{"name": "oignon", "quantity": "1"}
 	  ],
 	  "preparation": [
 		"Cuire le riz",
@@ -93,10 +103,10 @@ var fakeData = []byte(`{
 	  "day": "Vendredi",
 	  "recipeName": "Pizza maison",
 	  "ingredients": [
-		{"name": "pâte à pizza", "quantity": 1},
-		{"name": "jambon", "quantity": 200},
-		{"name": "tomate", "quantity": 2},
-		{"name": "fromage", "quantity": 200}
+		{"name": "pâte à pizza", "quantity": "1"},
+		{"name": "jambon", "quantity": "200g"},
+		{"name": "tomate", "quantity": "2"},
+		{"name": "fromage", "quantity": "200g"}
 	  ],
 	  "preparation": [
 		"Étaler la pâte à pizza",
@@ -107,7 +117,7 @@ var fakeData = []byte(`{
 	}
   ],
   "groceryList": [
-    {"name": "jambon", "quantity": 200},
-	{"name": "fromage", "quantity": 200}
+    {"name": "jambon", "quantity": "200g"},
+	{"name": "fromage", "quantity": "200g"}
   ]
 }`)

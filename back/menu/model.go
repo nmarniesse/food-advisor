@@ -9,7 +9,7 @@ type Query struct {
 
 type Ingredient struct {
 	Name     string `json:"name"`
-	Quantity int    `json:"quantity"`
+	Quantity string `json:"quantity"`
 }
 
 type Menu struct {
@@ -25,6 +25,15 @@ type Response struct {
 	GroceryList []Ingredient `json:"groceryList"`
 }
 
+type RefineQuery struct {
+	DaysToKeep []string
+}
+
+type RefineResponse struct {
+	Response string
+}
+
 type IAProvider interface {
 	RunQuery(Query) (*Response, error)
+	RunRefineQuery(RefineQuery) (*Response, error)
 }
