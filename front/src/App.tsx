@@ -1,10 +1,10 @@
 import "./App.css";
-import { FoodAdvisorForm } from "./pages/FoodAdvisorForm";
+import { FoodAdvisorPage } from "./pages/FoodAdvisorPage";
 
 function App() {
   return (
     <>
-      <FoodAdvisorForm />
+      <FoodAdvisorPage />
     </>
   );
 }

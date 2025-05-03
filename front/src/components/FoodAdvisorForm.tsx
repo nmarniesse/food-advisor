@@ -1,9 +1,6 @@
-import { useState } from "react";
+import { FC } from "react";
 import {
-  Backdrop,
   Button,
-  CircularProgress,
-  Container,
   Divider,
   Slider,
   Stack,
@@ -11,17 +8,17 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { Section } from "./common/Section";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { DefaultMenuData, MenuData } from "../models/MenuData";
-import { useFoodAdvisorForm } from "../hooks/useFoodAdvisorForm";
-import { Section } from "../components/common/Section";
-import { FoodAdvisorMenus } from "../components/FoodAdvisorMenus";
+import { MenuData } from "../models/MenuData";
 
-const FoodAdvisorForm = () => {
-  const [formData, setFormData] = useState<MenuData>(DefaultMenuData);
-  const { submit, data: responseData, isLoading } = useFoodAdvisorForm();
+type Props = {
+  formData: MenuData;
+  setFormData: (data: MenuData) => void;
+};
 
+const FoodAdvisorForm: FC<Props> = ({ formData, setFormData }) => {
   const updateFoodInFridge = (index: number, value: string) => {
     setFormData({
       ...formData,
@@ -33,8 +30,6 @@ const FoodAdvisorForm = () => {
     });
   };
   const removeFoodInFridge = (index: number) => {
-    console.log("index", index);
-
     setFormData({
       ...formData,
       foodInFridgeList: [
@@ -50,18 +45,7 @@ const FoodAdvisorForm = () => {
     });
 
   return (
-    <Container maxWidth="md">
-      {isLoading && (
-        <Backdrop
-          sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
-          open={true}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      )}
-      <Typography variant="h2" gutterBottom>
-        Générateur de menus
-      </Typography>
+    <>
       <Section>
         <Typography component="div">Aliments dans le frigo</Typography>
         {formData.foodInFridgeList.map((foodInFridge, index) => (
@@ -152,48 +136,7 @@ const FoodAdvisorForm = () => {
           }
         />
       </Section>
-      <Divider />
-      <Section>
-        {!responseData && (
-          <Button
-            variant="contained"
-            onClick={() => submit(formData)}
-            disabled={isLoading}
-          >
-            Valider
-          </Button>
-        )}
-        {responseData && (
-          <Stack
-            spacing={2}
-            direction="row"
-            sx={{ alignItems: "center", mb: 1 }}
-          >
-            <Button
-              variant="contained"
-              onClick={() => submit(formData)}
-              disabled={isLoading}
-            >
-              Relancer
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => alert("TODO")}
-              disabled={isLoading}
-            >
-              Relancer en gardant la sélection
-            </Button>
-          </Stack>
-        )}
-      </Section>
-      {!isLoading && responseData && (
-        <FoodAdvisorMenus
-          recipes={responseData.recipes}
-          groceryList={responseData.groceryList}
-        />
-      )}
-    </Container>
+    </>
   );
 };
 

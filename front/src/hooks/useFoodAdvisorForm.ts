@@ -8,7 +8,7 @@ type Return = {
   error: string | null;
 };
 
-type MenuResponse = {
+export type MenuResponse = {
   recipes: Recipe[];
   groceryList: Ingredient[];
 };
