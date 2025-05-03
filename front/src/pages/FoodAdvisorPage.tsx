@@ -31,13 +31,7 @@ const FoodAdvisorPage = () => {
       <Typography variant="h2" gutterBottom>
         Générateur de menus
       </Typography>
-      <FoodAdvisorForm
-        formData={formData}
-        setFormData={setFormData}
-        onSubmit={submit}
-        responseData={responseData}
-        isLoading={isLoading}
-      />
+      <FoodAdvisorForm formData={formData} setFormData={setFormData} />
 
       <Divider />
       <Section>
