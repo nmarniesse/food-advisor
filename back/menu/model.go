@@ -1,5 +1,7 @@
 package menu
 
+import "github.com/google/uuid"
+
 type Query struct {
 	FoodInFridge            []string
 	MaxPreparationTimeInMin int
@@ -21,12 +23,14 @@ type Menu struct {
 }
 
 type Response struct {
+	Uuid        uuid.UUID    `json:"uuid,omitempty"`
 	Menus       []Menu       `json:"recipes"`
 	GroceryList []Ingredient `json:"groceryList"`
 }
 
 type RefineQuery struct {
-	DaysToKeep []string
+	uuid       uuid.UUID
+	daysToKeep []string
 }
 
 type RefineResponse struct {
@@ -34,6 +38,6 @@ type RefineResponse struct {
 }
 
 type IAProvider interface {
-	RunQuery(Query) (*Response, error)
-	RunRefineQuery(RefineQuery) (*Response, error)
+	RunQuery(*Query) (*Response, error)
+	RunRefineQuery(*RefineQuery) (*Response, error)
 }

@@ -9,6 +9,7 @@ type Return = {
 };
 
 export type MenuResponse = {
+  uuid: string;
   recipes: Recipe[];
   groceryList: Ingredient[];
 };

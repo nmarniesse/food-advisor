@@ -50,7 +50,7 @@ const FoodAdvisorPage = () => {
             Valider
           </Button>
         )}
-        {(responseData || responseDataRefine) && (
+        {responseData && (
           <Stack
             spacing={2}
             direction="row"
@@ -66,7 +66,9 @@ const FoodAdvisorPage = () => {
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => submitRefine(["lundi", "mardi"])}
+              onClick={() =>
+                submitRefine(responseData.uuid, ["lundi", "mardi"])
+              } // @TODO: use selected days
               disabled={isLoadingRefine}
             >
               Relancer en gardant la sélection

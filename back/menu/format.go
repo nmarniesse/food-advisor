@@ -14,7 +14,8 @@ Nombre de personnes : %d personnes. Donne moi juste le plat principal.
 %s
 Les recettes doivent être bien notées sur internet. Tu peux utiliser des sites comme Marmiton, Cuisine AZ ou le journal des femmes.
 Recettes et liste de courses : Pour chaque repas, donne-moi la recette et la liste des courses globale pour toute la semaine.
-Je vais interpreter le résultat donc donne moi le resultat en format json comme par exemple:
+Je vais interpreter le résultat donc donne moi le resultat en format JSON. C'est important que le résultat soit un JSON valide.
+Voici un exemple de résultat :
 {
   "recipes": [
     {

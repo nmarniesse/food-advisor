@@ -7,11 +7,13 @@ import (
 	"log"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/sashabaranov/go-openai"
 )
 
 type ChatGPT struct {
-	Token string
+	Token                  string
+	conversationRepository ConversationRepository
 }
 
 func (c *ChatGPT) RunQuery(query *Query) (*Response, error) {
@@ -44,44 +46,67 @@ func (c *ChatGPT) RunQuery(query *Query) (*Response, error) {
 		return nil, err
 	}
 
+	uuid := uuid.New()
+	res.Uuid = uuid
+
+	// @TODO: decouple conversation save from the IA
+	c.conversationRepository.SaveConversation(&Conversation{
+		Uuid: uuid,
+		Messages: []ChatMessage{
+			{
+				Role:    openai.ChatMessageRoleUser,
+				Content: message,
+			},
+			{
+				Role:    openai.ChatMessageRoleSystem,
+				Content: response,
+			},
+		},
+	})
+	log.Println("Conversation Saved", uuid)
+
 	return &res, nil
 }
 
 func (c *ChatGPT) RunRefineQuery(query *RefineQuery) (*Response, error) {
 	client := openai.NewClient(c.Token)
 
-	/**
-	Note: It doesn't work because chatGPT doesn't remember the previous context.
-	To do that, we neet to keep the conversation history like that and give it to chatGPT:
+	conversation, err := c.conversationRepository.GetConversation(query.uuid)
+	if err != nil {
+		log.Println("Error getting conversation:", err)
+		return nil, err
+	}
 
-	[
-	  {"role": "system", "content": "You are a helpful assistant."},
-	  {"role": "user", "content": "Hello, who won the world cup in 2018?"},
-	  {"role": "assistant", "content": "France won the 2018 FIFA World Cup."},
-	  {"role": "user", "content": "Who was the top scorer?"}
-	]
+	if conversation == nil {
+		log.Println("Conversation not found", query.uuid)
+		return nil, fmt.Errorf("conversation not found")
+	}
 
-	Each time we want to ask something, add the {"role": "user", "content": "<question>"} at the end of
-	the list and send the whole content.
-	*/
+	log.Println("Conversation retrieved:", conversation)
 
-	message := `Peutx tu me donner d'autres propositions en gardant uniquement les jours suivants: %s.
-Donne moi le résultat avec le même format que précédemment.
+	newMessage := `Garde les recettes pour les jours suivants: %s. Et pour les autres jours, donne moi d'autres recettes.
+Donne moi le résultat avec le même format JSON que précédemment. C'est important que le résultat soit un JSON valide.
 	`
-	message = fmt.Sprintf(message, strings.Join(query.DaysToKeep, ", "))
+	newMessage = fmt.Sprintf(newMessage, strings.Join(query.daysToKeep, ", "))
+
+	conversation.Messages = append(conversation.Messages, ChatMessage{Role: openai.ChatMessageRoleUser, Content: newMessage})
+
+	var openaiMessages []openai.ChatCompletionMessage
+	for _, msg := range conversation.Messages {
+		openaiMessages = append(openaiMessages, openai.ChatCompletionMessage{
+			Role:    msg.Role,
+			Content: msg.Content,
+		})
+	}
 
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
-			Model: openai.GPT3Dot5Turbo,
-			Messages: []openai.ChatCompletionMessage{
-				{
-					Role:    openai.ChatMessageRoleUser,
-					Content: message,
-				},
-			},
+			Model:    openai.GPT3Dot5Turbo,
+			Messages: openaiMessages,
 		},
 	)
+
 	if err != nil {
 		fmt.Printf("ChatCompletion error: %v\n", err)
 		return nil, err
@@ -94,6 +119,10 @@ Donne moi le résultat avec le même format que précédemment.
 	if err := json.Unmarshal([]byte(response), &res); err != nil {
 		return nil, err
 	}
+
+	// @TODO: decouple conversation save from the IA
+	conversation.Messages = append(conversation.Messages, ChatMessage{Role: openai.ChatMessageRoleSystem, Content: response})
+	c.conversationRepository.SaveConversation(conversation)
 
 	return &res, nil
 }

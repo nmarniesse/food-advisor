@@ -2,13 +2,14 @@ import { useState } from "react";
 import { Ingredient, Recipe } from "../models/MenuData";
 
 type Return = {
-  submit: (daysToKeep: string[]) => void;
+  submit: (uuid: string, daysToKeep: string[]) => void;
   data: MenuResponse | null;
   isLoading: boolean;
   error: string | null;
 };
 
 export type MenuResponse = {
+  uuid: string;
   recipes: Recipe[];
   groceryList: Ingredient[];
 };
@@ -18,8 +19,9 @@ const useRefineWeekMenus = (): Return => {
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<MenuResponse | null>(null);
 
-  const submit = (daysToKeep: string[]) => {
+  const submit = (uuid: string, daysToKeep: string[]) => {
     const params = new URLSearchParams({
+      uuid,
       days_to_keep: daysToKeep.join(","),
     });
 

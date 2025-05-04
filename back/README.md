@@ -2,6 +2,11 @@
 
 API to generate menus using ChatGPT
 
+## Requirements
+
+- Go
+- SQLite3
+
 ## Usage
 
 - Get an API key on https://platform.openai.com/api-keys
