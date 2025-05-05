@@ -23,17 +23,8 @@ type ConversationRepository interface {
 	GetConversation(uuid uuid.UUID) (*Conversation, error)
 }
 
-func GetConversationRepository() ConversationRepository {
-	db, err := sql.Open("sqlite3", "database.db")
-	if err != nil {
-		panic(err)
-	}
-	// @TODO defer when http call is ended?
-	// defer db.Close()
-
-	repo := NewSqliteConversationRepository(db)
-
-	return repo
+func GetConversationRepository(db *sql.DB) ConversationRepository {
+	return NewSqliteConversationRepository(db)
 }
 
 type SqliteConversationRepository struct {

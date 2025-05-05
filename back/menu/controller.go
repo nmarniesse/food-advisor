@@ -13,6 +13,7 @@ import (
 
 func GetWeekMenu(w http.ResponseWriter, r *http.Request) {
 	di := NewDI()
+	defer di.Shutdown()
 
 	var err error
 	foodInFridgeParam := r.FormValue("food_in_fridge")
@@ -73,6 +74,7 @@ func GetWeekMenu(w http.ResponseWriter, r *http.Request) {
 
 func GetWeekMenuRefined(w http.ResponseWriter, r *http.Request) {
 	di := NewDI()
+	defer di.Shutdown()
 
 	var err error
 
