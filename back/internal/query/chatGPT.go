@@ -1,4 +1,4 @@
-package menu
+package query
 
 import (
 	"context"
@@ -8,18 +8,20 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
+	"github.com/nmarniesse/food-advisor/internal/model"
+	"github.com/nmarniesse/food-advisor/internal/storage"
 	"github.com/sashabaranov/go-openai"
 )
 
 type ChatGPT struct {
 	Token                  string
-	conversationRepository ConversationRepository
+	ConversationRepository storage.ConversationRepository
 }
 
-func (c *ChatGPT) RunQuery(query *Query) (*Response, error) {
+func (c *ChatGPT) RunQuery(query *model.Query) (*model.Response, error) {
 	client := openai.NewClient(c.Token)
 
-	message := query.formatToString()
+	message := query.FormatToString()
 	log.Println("Query is about to start with message:\n" + message)
 
 	resp, err := client.CreateChatCompletion(
@@ -41,7 +43,7 @@ func (c *ChatGPT) RunQuery(query *Query) (*Response, error) {
 	response := resp.Choices[0].Message.Content
 	log.Println("ChatGPT response: " + response)
 
-	var res Response
+	var res model.Response
 	if err := json.Unmarshal([]byte(response), &res); err != nil {
 		return nil, err
 	}
@@ -50,9 +52,9 @@ func (c *ChatGPT) RunQuery(query *Query) (*Response, error) {
 	res.Uuid = uuid
 
 	// @TODO: decouple conversation save from the IA
-	c.conversationRepository.SaveConversation(&Conversation{
+	c.ConversationRepository.SaveConversation(&storage.Conversation{
 		Uuid: uuid,
-		Messages: []ChatMessage{
+		Messages: []storage.ChatMessage{
 			{
 				Role:    openai.ChatMessageRoleUser,
 				Content: message,
@@ -68,17 +70,17 @@ func (c *ChatGPT) RunQuery(query *Query) (*Response, error) {
 	return &res, nil
 }
 
-func (c *ChatGPT) RunRefineQuery(query *RefineQuery) (*Response, error) {
+func (c *ChatGPT) RunRefineQuery(query *model.RefineQuery) (*model.Response, error) {
 	client := openai.NewClient(c.Token)
 
-	conversation, err := c.conversationRepository.GetConversation(query.uuid)
+	conversation, err := c.ConversationRepository.GetConversation(query.Uuid)
 	if err != nil {
 		log.Println("Error getting conversation:", err)
 		return nil, err
 	}
 
 	if conversation == nil {
-		log.Println("Conversation not found", query.uuid)
+		log.Println("Conversation not found", query.Uuid)
 		return nil, fmt.Errorf("conversation not found")
 	}
 
@@ -87,9 +89,9 @@ func (c *ChatGPT) RunRefineQuery(query *RefineQuery) (*Response, error) {
 	newMessage := `Garde les recettes pour les jours suivants: %s. Et pour les autres jours, donne moi d'autres recettes.
 Donne moi le résultat avec le même format JSON que précédemment. C'est important que le résultat soit un JSON valide.
 	`
-	newMessage = fmt.Sprintf(newMessage, strings.Join(query.daysToKeep, ", "))
+	newMessage = fmt.Sprintf(newMessage, strings.Join(query.DaysToKeep, ", "))
 
-	conversation.Messages = append(conversation.Messages, ChatMessage{Role: openai.ChatMessageRoleUser, Content: newMessage})
+	conversation.Messages = append(conversation.Messages, storage.ChatMessage{Role: openai.ChatMessageRoleUser, Content: newMessage})
 
 	var openaiMessages []openai.ChatCompletionMessage
 	for _, msg := range conversation.Messages {
@@ -115,14 +117,14 @@ Donne moi le résultat avec le même format JSON que précédemment. C'est impor
 	response := resp.Choices[0].Message.Content
 	log.Println("ChatGPT response: " + response)
 
-	var res Response
+	var res model.Response
 	if err := json.Unmarshal([]byte(response), &res); err != nil {
 		return nil, err
 	}
 
 	// @TODO: decouple conversation save from the IA
-	conversation.Messages = append(conversation.Messages, ChatMessage{Role: openai.ChatMessageRoleSystem, Content: response})
-	c.conversationRepository.SaveConversation(conversation)
+	conversation.Messages = append(conversation.Messages, storage.ChatMessage{Role: openai.ChatMessageRoleSystem, Content: response})
+	c.ConversationRepository.SaveConversation(conversation)
 
 	return &res, nil
 }

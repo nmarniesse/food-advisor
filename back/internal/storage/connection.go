@@ -1,4 +1,4 @@
-package menu
+package storage
 
 import "database/sql"
 

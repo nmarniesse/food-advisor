@@ -1,4 +1,4 @@
-package menu
+package query
 
 import (
 	"encoding/json"
@@ -6,16 +6,17 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/nmarniesse/food-advisor/internal/model"
 )
 
 type Fake struct{}
 
-func (f *Fake) RunQuery(query *Query) (*Response, error) {
-	message := query.formatToString()
+func (f *Fake) RunQuery(query *model.Query) (*model.Response, error) {
+	message := query.FormatToString()
 	log.Println("Query is about to start with message:\n" + message)
 
 	time.Sleep(1 * time.Second)
-	var res Response
+	var res model.Response
 	if err := json.Unmarshal(fakeData, &res); err != nil {
 		return nil, err
 	}
@@ -25,9 +26,9 @@ func (f *Fake) RunQuery(query *Query) (*Response, error) {
 	return &res, nil
 }
 
-func (f *Fake) RunRefineQuery(query *RefineQuery) (*Response, error) {
+func (f *Fake) RunRefineQuery(query *model.RefineQuery) (*model.Response, error) {
 	time.Sleep(1 * time.Second)
-	var res Response
+	var res model.Response
 	if err := json.Unmarshal(fakeDataRefine, &res); err != nil {
 		return nil, err
 	}

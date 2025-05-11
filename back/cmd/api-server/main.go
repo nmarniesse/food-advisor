@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/nmarniesse/food-advisor/menu"
+	"github.com/nmarniesse/food-advisor/api"
 	"github.com/rs/cors"
 )
 
@@ -21,8 +21,8 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/week-menu", menu.GetWeekMenu)
-	mux.HandleFunc("/refine-week-menu", menu.GetWeekMenuRefined)
+	mux.HandleFunc("/week-menu", api.GetWeekMenu)
+	mux.HandleFunc("/refine-week-menu", api.GetWeekMenuRefined)
 
 	handler := cors.Default().Handler(mux)
 	http.ListenAndServe(":8080", handler)

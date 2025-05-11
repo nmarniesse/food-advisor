@@ -1,11 +1,11 @@
-package menu
+package model
 
 import (
 	"fmt"
 	"strings"
 )
 
-func (query *Query) formatToString() string {
+func (query *Query) FormatToString() string {
 	template := `Je souhaite que tu me fasses un menu pour la semaine avec les conditions suivantes :
 %s
 Essaie de ne pas utiliser le même ingrédient plus de 2 repas.

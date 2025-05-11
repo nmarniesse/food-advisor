@@ -1,4 +1,4 @@
-package menu
+package api
 
 import (
 	"encoding/json"
@@ -9,10 +9,12 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
+	"github.com/nmarniesse/food-advisor/internal/di"
+	"github.com/nmarniesse/food-advisor/internal/model"
 )
 
 func GetWeekMenu(w http.ResponseWriter, r *http.Request) {
-	di := NewDI()
+	di := di.NewDI()
 	defer di.Shutdown()
 
 	var err error
@@ -50,14 +52,14 @@ func GetWeekMenu(w http.ResponseWriter, r *http.Request) {
 	log.Println("persons:", persons)
 	log.Println("useSasonIngredients:", useSasonIngredients)
 
-	query := &Query{
+	query := &model.Query{
 		FoodInFridge:            foodInFridge,
 		MaxPreparationTimeInMin: maxPreparationTime,
 		UseSeasonIngredient:     useSasonIngredients,
 		Persons:                 persons,
 	}
 
-	menus, err := di.ia.RunQuery(query)
+	menus, err := di.Ia.RunQuery(query)
 	if err != nil {
 		log.Panicln(err)
 	}
@@ -73,7 +75,7 @@ func GetWeekMenu(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetWeekMenuRefined(w http.ResponseWriter, r *http.Request) {
-	di := NewDI()
+	di := di.NewDI()
 	defer di.Shutdown()
 
 	var err error
@@ -93,8 +95,8 @@ func GetWeekMenuRefined(w http.ResponseWriter, r *http.Request) {
 		daysToKeep = strings.Split(daysToKeepParam, ",")
 	}
 
-	query := &RefineQuery{uuid: uuid, daysToKeep: daysToKeep}
-	menus, err := di.ia.RunRefineQuery(query)
+	query := &model.RefineQuery{Uuid: uuid, DaysToKeep: daysToKeep}
+	menus, err := di.Ia.RunRefineQuery(query)
 	if err != nil {
 		log.Panicln(err)
 	}

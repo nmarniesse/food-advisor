@@ -1,4 +1,4 @@
-package menu
+package model
 
 import "github.com/google/uuid"
 
@@ -29,8 +29,8 @@ type Response struct {
 }
 
 type RefineQuery struct {
-	uuid       uuid.UUID
-	daysToKeep []string
+	Uuid       uuid.UUID
+	DaysToKeep []string
 }
 
 type RefineResponse struct {
